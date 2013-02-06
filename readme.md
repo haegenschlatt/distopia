@@ -4,6 +4,7 @@ Distopia is a discussion forum that features indented replies, color-coded pseud
 
 # Installation
 There is currently no automated installation.
+
 1. Place the distopia folder somewhere in your web server.
 2. Enable mod_rewrite if it is not already enabled.
 3. Create a new MySQL user and corresponding database.
