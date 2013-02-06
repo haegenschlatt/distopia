@@ -28,6 +28,7 @@ Features that need to be re-implemented
 * The admin panel
 * Post deletion
 * Almost all admin-related functions (reports, deletion, bans)
+* Front page
 
 Features that need to be added:
 * User logins
