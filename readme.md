@@ -12,6 +12,7 @@ There is currently no automated installation.
 5. Save as database.php
 6. Run distopia.sql on the database. This will set up the necessary tables and create one board.
 7. See that board at [install location]/board/a/
+8. (Optional) Insert your CAPTCHA public and private keys in the indicated places in application/config/constants-sample.php and save as constants.php
 
 # Features
 
