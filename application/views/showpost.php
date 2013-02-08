@@ -29,10 +29,6 @@ if($class=="reply")
 {
 	echo "<a name='".$id."'></a>";
 }
-if($latest=="9999999999")
-{
-	echo "| <span class='admin'>Sticky</span> | ";
-}
 if($color!="none")
 {
 	echo '<div style="width: 20px; height: 20px; background: #'.$color.'; float: left; margin-right: 10px;"></div>';
