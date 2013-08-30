@@ -27,7 +27,7 @@ class Board extends CI_Controller {
 			}
 		}
 	}
-	public function loadBoard($board,$page)
+	private function loadBoard($board,$page)
 	{
 		$this->load->library('DisFunctions');
 		$this->disfunctions->checkBan();
@@ -70,7 +70,7 @@ class Board extends CI_Controller {
 		$this->load->view("footer",$fdata);
 	}
 
-	public function loadThread($thread,$board)
+	private function loadThread($thread,$board)
 	{
 		$this->load->library('DisFunctions');
 		$this->disfunctions->checkBan();
