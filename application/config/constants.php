@@ -38,8 +38,8 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
 // distopia constants
 
-define('CAPTCHA_PRIVATE_KEY','');
-define('CAPTCHA_PUBLIC_KEY','');
+define('CAPTCHA_PRIVATE_KEY','6LcYxtwSAAAAAMT4Imj6HS-bv7G2OJUoUHKCVKQg');
+define('CAPTCHA_PUBLIC_KEY','6LcYxtwSAAAAAJjoejo7saUvAUDWRODHvRbFYNyu');
 
 
 /* End of file constants.php */

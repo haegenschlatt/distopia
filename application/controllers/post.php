@@ -18,6 +18,7 @@ class Post extends CI_Controller {
 		}
 
 		// Connect to CAPTCHA and verify that the user's challenge was entered correctly. If not, abort the script.
+		/* Removed for testing.
 		$captcha_data = array(
 			'privatekey' => CAPTCHA_PRIVATE_KEY,
 			'remoteip' => $_SERVER['REMOTE_ADDR'],
@@ -36,6 +37,8 @@ class Post extends CI_Controller {
 		{
 			exit("Cannot connect to CAPTCHA service. Please try again later. <a href='".$this->input->post("origin")."'>Back to the previous page</a>");
 		}
+
+		*/
 		//	Name and content of the post come from POST. If there is no name, the name is anonymous.
 		if($this->input->post('name')=="")
 		{
@@ -52,6 +55,7 @@ class Post extends CI_Controller {
 			// Since a name was given, we don't have to generate a color.
 			$generatecolor=0;
 		}
+		
 
 		// For admin post. May change in the future. Unnecessary at the moment.
 		/*
@@ -114,7 +118,7 @@ class Post extends CI_Controller {
 		$thread = $this->input->post('thread');
 		//	REMOTE_ADDR is modified by Cloudflare.php in application/hooks.
 		$ip = $_SERVER["REMOTE_ADDR"];
-		//	The board is sent in a hidden field via POST. Everything else here is just a security measure to prevent injection.
+		//	The board is sent in a hidden field via POST.
 		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=".$this->db->escape($board));
 		if($query->num_rows()===1)
 		{
