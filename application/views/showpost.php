@@ -64,7 +64,7 @@ if($image != 0)
 echo $content;
 if($class=="postpreview")
 {
-		$query = $this->db->query("SELECT * FROM posts WHERE thread='".$id."' AND board='".$board."'");
+		$query = $this->db->query("SELECT * FROM posts WHERE thread=? AND board=?",array($id,$board));
 		if($query->num_rows()>0)
 		echo "<br /><small style='color:#888'>Latest replies to this thread: (" . $query->num_rows() ." total)</small>";
 }

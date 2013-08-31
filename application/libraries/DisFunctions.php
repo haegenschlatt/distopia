@@ -6,7 +6,7 @@ class DisFunctions {
 		$CI =& get_instance();
 		$ip = $_SERVER["REMOTE_ADDR"];
 		$CI->load->database();
-		$query = $CI->db->query("SELECT * FROM bans WHERE ip='".$ip."' ORDER BY expire DESC");
+		$query = $CI->db->query("SELECT * FROM bans WHERE ip=? ORDER BY expire DESC",array($ip));
 		if($query->num_rows()>0)
 		{
 			$result = $query->row_array();
@@ -26,7 +26,7 @@ class DisFunctions {
 		// Returns true if the thread is in an archived state.
 		$CI =& get_instance();
 		$CI->load->database();
-		$query = $CI->db->query("SELECT latest FROM posts WHERE id=".$thread." ORDER BY latest DESC");
+		$query = $CI->db->query("SELECT latest FROM posts WHERE id=? ORDER BY latest DESC",array($thread));
 		if($query->num_rows()>0)
 		{
 			$results = $query->row_array();
