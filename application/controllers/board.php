@@ -27,6 +27,7 @@ class Board extends CI_Controller {
 			}
 		}
 	}
+
 	private function loadBoard($board,$page)
 	{
 		$this->load->library('DisFunctions');
@@ -119,30 +120,63 @@ class Board extends CI_Controller {
 			}
 		}
 
-		$this->loadReplies($thread, 0, $board);
+		$posts = array();
+		$postMap = array();
+		$query = $this->db->query("SELECT
+			name,
+			content,
+			date,
+			id,
+			ip,
+			board,
+			color,
+			thread,
+			parent,
+			latest,
+			image
+			FROM posts WHERE thread=? AND board=? ORDER BY date ASC;", array($thread,$board));
+
+		foreach($query->result_array() as $row)
+		{
+			$posts[$row["id"]] = $row;
+			// child => parent
+			$postMap[$row["id"]] = $row["parent"];
+		}
+
+		$postTree = $this->mapReplies($postMap,$thread);
+
+		$this->loadReplies($postTree,$posts);
 		$fdata["type"] = "thread";
 		$this->load->view("footer",$fdata);
 	}
 
-//	Call loadReplies with the OP as the parent. OP must be loaded individually.
-	private function loadReplies($parent, $hierarchy, $board)
+	private function mapReplies($postMap, $node, $hierarchy = 0)
 	{
-		$query = $this->db->query("SELECT * FROM posts WHERE parent=? AND board=? ORDER BY date ASC",array($parent,$board));
-		if($query->num_rows()>0)
+		$result = array();
+		foreach($postMap as $post => $parent)
 		{
-
-			foreach($query->result_array() as $replydata)
+			if($parent == $node)
 			{
-				$replydata['class'] = "reply";
-				$replydata['hierarchy'] = $hierarchy;
-				$this->load->view("showpost",$replydata);
-				$testquery = $this->db->query("SELECT * FROM posts WHERE parent=? AND board=?;",array($replydata["id"],$board));
-				if($testquery->num_rows()>0)
-				{
-					$this->loadReplies($replydata['id'], ($hierarchy+1), $board);
-
-				}
+				unset($postMap[$post]);
+				$result[$post] = array(
+					"id" => $post,
+					"hierarchy" => $hierarchy,
+					"children" => $this->mapReplies($postMap,$post,($hierarchy+1))
+					);
 			}
+		}
+		return $result;
+	}
+
+	private function loadReplies($postTree,$posts)
+	{
+		foreach($postTree as $id => $data)
+		{
+			$replydata = $posts[$id];
+			$replydata['class'] = "reply";
+			$replydata['hierarchy'] = $data["hierarchy"];
+			$this->load->view("showpost",$replydata);
+			$this->loadReplies($data["children"],$posts);
 		}
 	}
 
