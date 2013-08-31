@@ -6,17 +6,6 @@ class Post extends CI_Controller {
 		$this->load->library('DisFunctions');
 		$this->disfunctions->checkBan();
 		
-		// Check to see if this user is muted. If they are, abort the script and give them a warning.
-		$query = $this->db->query("SELECT expire,duration,reason FROM mutes WHERE ip=? ORDER BY expire DESC LIMIT 1",array($_SERVER["REMOTE_ADDR"]));
-		if($query->num_rows()>0)
-		{
-			$muteTest = $query->row_array();
-			if($muteTest["expire"]>time())
-			{
-				exit("You have been muted for " . $muteTest["duration"].  " " . $muteTest["reason"] . " Please wait and try again. <a href='".$this->input->post("origin")."'>Back to the previous page</a>");
-			}
-		}
-
 		// Connect to CAPTCHA and verify that the user's challenge was entered correctly. If not, abort the script.
 		/* Removed for testing.
 		$captcha_data = array(
@@ -37,8 +26,8 @@ class Post extends CI_Controller {
 		{
 			exit("Cannot connect to CAPTCHA service. Please try again later. <a href='".$this->input->post("origin")."'>Back to the previous page</a>");
 		}
-
 		*/
+
 		//	Name and content of the post come from POST. If there is no name, the name is anonymous.
 		if($this->input->post('name')=="")
 		{
@@ -55,20 +44,6 @@ class Post extends CI_Controller {
 			// Since a name was given, we don't have to generate a color.
 			$generatecolor=0;
 		}
-		
-
-		// For admin post. May change in the future. Unnecessary at the moment.
-		/*
-		$ad = strpos($name, "$!$");
-		// Although unwieldy, this code is necessary because strpos() either outputs boolean FALSE or an integer.
-		if($ad === FALSE)
-		{
-			$adminOverride = false;
-		} else
-		{
-			$adminOverride = true;
-		}
-		*/
 
 		$board = $this->input->post('board');
 		// Self-explanatory
@@ -191,9 +166,6 @@ class Post extends CI_Controller {
 			$latestar = $query->row_array();
 			$latest = $latestar['latest'];
 		}
-		// Mute this person for 15 seconds for flood prevention 
-		// $exptime = time()+15;
-		//$this->db->query("INSERT INTO mutes VALUES('".$_SERVER["REMOTE_ADDR"]."','".$exptime."','15 seconds','as a flood prevention measure.')");
 
 		// Image handling
 		if($_FILES["upload"]["name"] == null)
@@ -247,10 +219,10 @@ class Post extends CI_Controller {
 			$content,
 			$date,
 			$id,
-			$thread,
 			$ip,
 			$board,
 			$color,
+			$thread,
 			$parent,
 			$latest,
 			$imgEntry);
