@@ -16,4 +16,17 @@ $(document).ready(function() {
 		$(".singlepost."+reply).append($("#createpost"));
 		$("#createpost").fadeIn(200);
 	});
+	$(".postimage").click(function(event) {
+		event.preventDefault();
+		var full = $(this).find("a").attr("href");
+		if($(this).hasClass("expanded")) {
+			var n = full.lastIndexOf("/");
+			var thumb = full.substr(0,n) + "/thumbs/" + full.substr(n+1);
+			$(this).find("img").attr("src",thumb);
+			$(this).removeClass("expanded");
+		} else {
+			$(this).find("img").attr("src",full);
+			$(this).addClass("expanded");
+		}
+	})
 });

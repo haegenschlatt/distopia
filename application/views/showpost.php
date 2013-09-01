@@ -58,7 +58,7 @@ echo "</div>";
 
 if($image != 0)
 {
-	echo "<br><a class='postimg' href='". base_url() . "images/$image'><img src='".base_url()."images/thumbs/$image' /></a>";
+	echo "<div class='postimage'><a class='postimg' href='". base_url() . "images/$image'><img src='".base_url()."images/thumbs/$image' /></a></div>";
 }
 
 echo $content;
