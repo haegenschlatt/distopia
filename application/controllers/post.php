@@ -6,17 +6,6 @@ class Post extends CI_Controller {
 		$this->load->library('DisFunctions');
 		$this->disfunctions->checkBan();
 		
-		// Check to see if this user is muted. If they are, abort the script and give them a warning.
-		$query = $this->db->query("SELECT expire,duration,reason FROM mutes WHERE ip='".$_SERVER["REMOTE_ADDR"]."' ORDER BY expire DESC LIMIT 1");
-		if($query->num_rows()>0)
-		{
-			$muteTest = $query->row_array();
-			if($muteTest["expire"]>time())
-			{
-				exit("You have been muted for " . $muteTest["duration"].  " " . $muteTest["reason"] . " Please wait and try again. <a href='".$this->input->post("origin")."'>Back to the previous page</a>");
-			}
-		}
-
 		// Connect to CAPTCHA and verify that the user's challenge was entered correctly. If not, abort the script.
 		/* Removed for testing.
 		$captcha_data = array(
@@ -37,8 +26,8 @@ class Post extends CI_Controller {
 		{
 			exit("Cannot connect to CAPTCHA service. Please try again later. <a href='".$this->input->post("origin")."'>Back to the previous page</a>");
 		}
-
 		*/
+
 		//	Name and content of the post come from POST. If there is no name, the name is anonymous.
 		if($this->input->post('name')=="")
 		{
@@ -55,20 +44,6 @@ class Post extends CI_Controller {
 			// Since a name was given, we don't have to generate a color.
 			$generatecolor=0;
 		}
-		
-
-		// For admin post. May change in the future. Unnecessary at the moment.
-		/*
-		$ad = strpos($name, "$!$");
-		// Although unwieldy, this code is necessary because strpos() either outputs boolean FALSE or an integer.
-		if($ad === FALSE)
-		{
-			$adminOverride = false;
-		} else
-		{
-			$adminOverride = true;
-		}
-		*/
 
 		$board = $this->input->post('board');
 		// Self-explanatory
@@ -91,10 +66,10 @@ class Post extends CI_Controller {
 		// At the moment, the r9k match only checks for an EXACT match in the string - case and everything.
 		// In the future it should work the way Munroe has specified it here:
 		// Check to see if r9k is enabled for this board
-		$query = $this->db->query("SELECT r9k FROM boardmeta WHERE name='".$board."'");
+		$query = $this->db->query("SELECT r9k FROM boardmeta WHERE name=?",array($board));
 		$r9kcheck = $query->row_array();
 		$r9k = $r9kcheck["r9k"];
-		$query = $this->db->query("SELECT * FROM posts WHERE content='".$content."' AND board='".$board."'");
+		$query = $this->db->query("SELECT * FROM posts WHERE content=? AND board=?",array($content,$board));
 		if($query->num_rows()>0 && $r9k)
 		{
 			exit("This content is not original. Write something unique! <a href='".$this->input->post("origin")."'>Back to the previous page</a>");
@@ -119,7 +94,7 @@ class Post extends CI_Controller {
 		//	REMOTE_ADDR is modified by Cloudflare.php in application/hooks.
 		$ip = $_SERVER["REMOTE_ADDR"];
 		//	The board is sent in a hidden field via POST.
-		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=".$this->db->escape($board));
+		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=?;",array($board));
 		if($query->num_rows()===1)
 		{
 			$board = $this->input->post('board');
@@ -132,7 +107,7 @@ class Post extends CI_Controller {
 		{
 			if($thread != -1)
 			{
-				$query = $this->db->query("SELECT color FROM posts WHERE ip='".$ip."' AND(thread='".$thread."' OR id='".$thread."') AND color!='none'");
+				$query = $this->db->query("SELECT color FROM posts WHERE ip=? AND(thread=? OR id=?) AND color!='none'",array($ip,$thread,$thread));
 			}
 			if($query->num_rows()==0 || $thread==-1)
 			{
@@ -173,7 +148,7 @@ class Post extends CI_Controller {
 			$latest = time();
 		} else if($this->input->post('sage')!="y")
 		{
-			$query = $this->db->query("SELECT * FROM posts WHERE id=".$thread);
+			$query = $this->db->query("SELECT * FROM posts WHERE id=?;",array($thread));
 			if($query->num_rows>0)
 			{
 				$results = $query->row_array();
@@ -181,19 +156,16 @@ class Post extends CI_Controller {
 				//if(!($results["latest"]==9999999999 || $this->disfunctions->checkArchive($thread)))
 				if(!$this->disfunctions->checkArchive($thread))
 				{
-					$this->db->query("UPDATE posts SET latest=".time()." WHERE id=".$thread);
+					$this->db->query("UPDATE posts SET latest=? WHERE id=?;",array(time(),$thread));
 				}
 				$latest="";
 			}
 		} else if($this->input->post('sage')=="y")
 		{
-			$query = $this->db->query("SELECT latest FROM posts WHERE id=".$thread);
+			$query = $this->db->query("SELECT latest FROM posts WHERE id=?;",array($thread));
 			$latestar = $query->row_array();
 			$latest = $latestar['latest'];
 		}
-		// Mute this person for 15 seconds for flood prevention 
-		// $exptime = time()+15;
-		//$this->db->query("INSERT INTO mutes VALUES('".$_SERVER["REMOTE_ADDR"]."','".$exptime."','15 seconds','as a flood prevention measure.')");
 
 		// Image handling
 		if($_FILES["upload"]["name"] == null)
@@ -242,7 +214,19 @@ class Post extends CI_Controller {
 		}
 
 		// Put everything into the DB!
-		$query = $this->db->query("INSERT INTO posts VALUES('$name', '$content', '$date', '$id', '$thread', '$ip', '$board', '$color', '$parent', '$latest', '$imgEntry')");
+		$postContent = array(
+			$name,
+			$content,
+			$date,
+			$id,
+			$ip,
+			$board,
+			$color,
+			$thread,
+			$parent,
+			$latest,
+			$imgEntry);
+		$query = $this->db->query("INSERT INTO posts VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",$postContent);
 		
 		if($query)
 		{

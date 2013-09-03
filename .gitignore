@@ -5,3 +5,13 @@
 */cache/!index.html
 
 application/config/database.php
+
+images/*.jpg
+images/*.png
+images/*.gif
+images/!index.html
+
+images/thumbs/*.jpg
+images/thumbs/*.png
+images/thumbs/*.gif
+images/thumbs/!index.html

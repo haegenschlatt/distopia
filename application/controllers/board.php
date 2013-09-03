@@ -27,12 +27,13 @@ class Board extends CI_Controller {
 			}
 		}
 	}
+
 	private function loadBoard($board,$page)
 	{
 		$this->load->library('DisFunctions');
 		$this->disfunctions->checkBan();
 		// Send the board data to the board.
-		$query = $this->db->query("SELECT * FROM boardmeta WHERE name='".$board."'");
+		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=?",$board);
 		if($query->num_rows()==0)
 		{
 			exit("The requested board does not exist.");
@@ -43,7 +44,7 @@ class Board extends CI_Controller {
 			$boardmeta['thread'] = -1;
 			$this->load->view("header", $boardmeta);
 		}
-		$query = $this->db->query("SELECT * FROM posts WHERE board='".$board."' AND thread=-1 ORDER BY latest DESC LIMIT 10 OFFSET ".$page*20);
+		$query = $this->db->query("SELECT * FROM posts WHERE board=? AND thread=-1 ORDER BY latest DESC LIMIT 10 OFFSET ?;",array($board,$page*20));
 		if($query->num_rows()>0)
 		{
 			foreach($query->result_array() as $postdata)
@@ -56,7 +57,7 @@ class Board extends CI_Controller {
 				//	Load in the post preview.
 				$this->load->view("showpost",$postdata);
 				//	Load in reply previews. Only first-level (direct reply to OP) comments are shown.
-				$query2 = $this->db->query("(SELECT * FROM posts WHERE thread=".$postdata['id']." ORDER BY date DESC LIMIT 5) ORDER BY date ASC");
+				$query2 = $this->db->query("(SELECT * FROM posts WHERE thread=? ORDER BY date DESC LIMIT 5) ORDER BY date ASC",array($postdata['id']));
 				foreach($query2->result_array() as $replypreviewdata)
 				{
 					$replypreviewdata['class'] = "replypreview";
@@ -76,7 +77,7 @@ class Board extends CI_Controller {
 		$this->disfunctions->checkBan();
 
 		// Check the board
-		$query = $this->db->query("SELECT * FROM boardmeta WHERE name='".$board."'");
+		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=?;",array($board));
 		if($query->num_rows()==0)
 		{
 			exit("The requested board does not exist.");
@@ -88,7 +89,7 @@ class Board extends CI_Controller {
 		}
 
 		// Check for the OP
-		$query = $this->db->query("SELECT * FROM posts WHERE id=".$this->db->escape($thread)." AND board='".$board."'");
+		$query = $this->db->query("SELECT * FROM posts WHERE id=? AND board=?",array($thread,$board));
 		if($query->num_rows()>0)
 		{
 			$row = $query->row_array();
@@ -106,7 +107,7 @@ class Board extends CI_Controller {
 			}
 		} else
 		{
-			$query = $this->db->query("SELECT * FROM posts WHERE id=".$this->db->escape($thread));
+			$query = $this->db->query("SELECT * FROM posts WHERE id=?;",array($this->db->escape($thread)));
 			if($query->num_rows()>0)
 			{
 				$result = $query->row_array();
@@ -119,31 +120,63 @@ class Board extends CI_Controller {
 			}
 		}
 
-		$this->loadReplies($thread, 0, $board);
+		$posts = array();
+		$postMap = array();
+		$query = $this->db->query("SELECT
+			name,
+			content,
+			date,
+			id,
+			ip,
+			board,
+			color,
+			thread,
+			parent,
+			latest,
+			image
+			FROM posts WHERE thread=? AND board=? ORDER BY date ASC;", array($thread,$board));
+
+		foreach($query->result_array() as $row)
+		{
+			$posts[$row["id"]] = $row;
+			// child => parent
+			$postMap[$row["id"]] = $row["parent"];
+		}
+
+		$postTree = $this->mapReplies($postMap,$thread);
+
+		$this->loadReplies($postTree,$posts);
 		$fdata["type"] = "thread";
 		$this->load->view("footer",$fdata);
 	}
-//	Call loadReplies with the OP as the parent. OP must be loaded individually.
-	private function loadReplies($parent, $hierarchy, $board)
-	{
-		$query = $this->db->query("SELECT * FROM posts WHERE parent=".$parent." AND board='".$board."' ORDER BY date ASC");
-		if($query->num_rows()>0)
-		{
 
-			foreach($query->result_array() as $replydata)
+	private function mapReplies($postMap, $node, $hierarchy = 0)
+	{
+		$result = array();
+		foreach($postMap as $post => $parent)
+		{
+			if($parent == $node)
 			{
-				$replydata['class'] = "reply";
-				$replydata['hierarchy'] = $hierarchy;
-				$this->load->view("showpost",$replydata);
-				$testquery = $this->db->query("SELECT * FROM posts WHERE parent=".$replydata['id']." AND board='".$board."'");
-				if($testquery->num_rows()>0)
-				{
-					$hierarchy++;
-					$qstring2 = "SELECT * FROM posts WHERE parent=".$replydata['id']."AND board='".$board."'";
-					$this->loadReplies($replydata['id'], $hierarchy, $board);
-					$hierarchy--;
-				}
+				unset($postMap[$post]);
+				$result[$post] = array(
+					"id" => $post,
+					"hierarchy" => $hierarchy,
+					"children" => $this->mapReplies($postMap,$post,($hierarchy+1))
+					);
 			}
+		}
+		return $result;
+	}
+
+	private function loadReplies($postTree,$posts)
+	{
+		foreach($postTree as $id => $data)
+		{
+			$replydata = $posts[$id];
+			$replydata['class'] = "reply";
+			$replydata['hierarchy'] = $data["hierarchy"];
+			$this->load->view("showpost",$replydata);
+			$this->loadReplies($data["children"],$posts);
 		}
 	}
 

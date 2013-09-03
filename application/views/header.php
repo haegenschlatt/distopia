@@ -21,7 +21,7 @@ if($thread!=-1)
 {
 	echo "<span style='padding:0; margin:0; color:#777'>[thread #" . $thread . "]</span>";
 
-	$query = $this->db->query("SELECT latest FROM posts WHERE id=".$thread);
+	$query = $this->db->query("SELECT latest FROM posts WHERE id=?",array($thread));
 	$result = $query->row_array();
 
 	if($this->disfunctions->checkArchive($thread))
