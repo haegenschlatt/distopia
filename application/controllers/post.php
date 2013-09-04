@@ -237,23 +237,7 @@ class Post extends CI_Controller {
 			{
 				$redirdest = $this->input->post('origin');
 			}
-?>
-<html>
-<head>
-<script type="text/javascript">
-<!--
-function redir(){
-    window.location = "<?php echo $redirdest;?>"
-}
-//-->
-</script>
-</head>
-<body onLoad="setTimeout('redir()',2000)">
-<b>Post successful!</b>
-<small>Redirecting in 2 seconds.</small>
-</body>
-<?php
-
+			header("Location: " . $redirdest);
 		} else
 		{
 			echo "The post was not successful.";
