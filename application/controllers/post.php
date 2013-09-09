@@ -3,7 +3,6 @@
 class Post extends CI_Controller {
 	//	Create new thread
 	public function _remap() {
-		//$this->load->library('DisFunctions');
 		//$this->disfunctions->checkBan();
 		
 		// Connect to CAPTCHA and verify that the user's challenge was entered correctly. If not, abort the script.
@@ -151,13 +150,7 @@ class Post extends CI_Controller {
 			$query = $this->db->query("SELECT * FROM posts WHERE id=?;",array($thread));
 			if($query->num_rows>0)
 			{
-				$results = $query->row_array();
-				// If neither the "latest" is sticky, nor the time is within the archive limit, then everything is okay and we can bump the thread.
-				//if(!($results["latest"]==9999999999 || $this->disfunctions->checkArchive($thread)))
-				if(!$this->disfunctions->checkArchive($thread))
-				{
-					$this->db->query("UPDATE posts SET latest=? WHERE id=?;",array(time(),$thread));
-				}
+				$this->db->query("UPDATE posts SET latest=? WHERE id=?;",array(time(),$thread));
 				$latest="";
 			}
 		} else if($this->input->post('sage')=="y")

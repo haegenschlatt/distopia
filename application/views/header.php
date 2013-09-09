@@ -1,5 +1,4 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
-$this->load->library("DisFunctions");
 ?>
 <!DOCTYPE html>
 <html>
@@ -23,11 +22,6 @@ if($thread!=-1)
 
 	$query = $this->db->query("SELECT latest FROM posts WHERE id=?",array($thread));
 	$result = $query->row_array();
-
-	if($this->disfunctions->checkArchive($thread))
-	{
-		echo "<span style='color:#777'>[archived]</span>";
-	}
 } else
 {
 	echo "<a id='showCreatePost' href='#'>Create new thread</a>";
