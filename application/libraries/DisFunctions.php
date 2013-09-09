@@ -3,6 +3,7 @@
 class DisFunctions {
 	public function checkBan()
 	{
+		/*
 		$CI =& get_instance();
 		$ip = $_SERVER["REMOTE_ADDR"];
 		$CI->load->database();
@@ -20,7 +21,9 @@ class DisFunctions {
 				exit();
 			}
 		}
+		*/
 	}
+	
 	public function checkArchive($thread)
 	{
 		// Returns true if the thread is in an archived state.

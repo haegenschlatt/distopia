@@ -28,5 +28,5 @@ $(document).ready(function() {
 			$(this).find("img").attr("src",full);
 			$(this).addClass("expanded");
 		}
-	})
+	});
 });
