@@ -34,7 +34,7 @@ class Board extends CI_Controller {
 		$this->disfunctions->checkBan();
 		// Send the board data to the board.
 		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=?",$board);
-		if($query->num_rows()==0)
+		if($query->num_rows()!=1)
 		{
 			exit("The requested board does not exist.");
 		}

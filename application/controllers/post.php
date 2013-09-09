@@ -3,8 +3,8 @@
 class Post extends CI_Controller {
 	//	Create new thread
 	public function _remap() {
-		$this->load->library('DisFunctions');
-		$this->disfunctions->checkBan();
+		//$this->load->library('DisFunctions');
+		//$this->disfunctions->checkBan();
 		
 		// Connect to CAPTCHA and verify that the user's challenge was entered correctly. If not, abort the script.
 		/* Removed for testing.
