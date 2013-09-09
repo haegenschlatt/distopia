@@ -34,7 +34,7 @@ if($color!="none")
 	echo '<div style="width: 20px; height: 20px; background: #'.$color.'; float: left; margin-right: 10px;"></div>';
 }
 echo "<div class='postinfo'>";
-echo "<b>" . $name . "</b>" . " | " . timeago($date) . " | No." . $id;
+echo "<b>" . $name . "</b>" . " | " . timeago($date) . " | <a href='#" . $id . "' name='" . $id . "'>No. " . $id . "</a>";
 if($class=="reply" || $class=="replypreview")
 {
 	echo " | In reply to <a href='" . base_url() . "board/" . $board . "/thread/" . $thread . "#" . $parent . "'>" . "post " . $parent . "</a>";
