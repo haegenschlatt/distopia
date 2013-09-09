@@ -3,8 +3,6 @@
 class Board extends CI_Controller {
 	public function _remap($request, $request2)
 	{
-		$this->load->library('DisFunctions');
-		$this->disfunctions->checkBan();
 		// dis.url/board/request/request2[0]/request2[1]
 		if($request == "index")
 		{
@@ -30,8 +28,6 @@ class Board extends CI_Controller {
 
 	private function loadBoard($board,$page)
 	{
-		$this->load->library('DisFunctions');
-		$this->disfunctions->checkBan();
 		// Send the board data to the board.
 		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=?",$board);
 		if($query->num_rows()!=1)
@@ -49,22 +45,11 @@ class Board extends CI_Controller {
 		{
 			foreach($query->result_array() as $postdata)
 			{
-				//	The only difference between different types of posts are the places they are used:
-				//	OP on the front page, reply previews on the front page, the OP in the thread, and replies in the thread.
-				//	Thus, the only thing that changes is the styling (and, for OPs on the front page, logic that shows the number of replies.)
-				//	So we just pass the desired CSS class to the view.
-				$postdata['class'] = "postpreview";
 				//	Load in the post preview.
-				$this->load->view("showpost",$postdata);
-				//	Load in reply previews. Only first-level (direct reply to OP) comments are shown.
-				$query2 = $this->db->query("(SELECT * FROM posts WHERE thread=? ORDER BY date DESC LIMIT 5) ORDER BY date ASC",array($postdata['id']));
-				foreach($query2->result_array() as $replypreviewdata)
-				{
-					$replypreviewdata['class'] = "replypreview";
-					$this->load->view("showpost",$replypreviewdata);
-				}
+				$this->load->view("preview",$postdata);
 			}
 		}
+
 		$fdata["page"]=$page;
 		$fdata["board"]=$board;
 		$fdata["type"]="board";
@@ -73,9 +58,6 @@ class Board extends CI_Controller {
 
 	private function loadThread($thread,$board)
 	{
-		$this->load->library('DisFunctions');
-		$this->disfunctions->checkBan();
-
 		// Check the board
 		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=?;",array($board));
 		if($query->num_rows()==0)
@@ -102,8 +84,7 @@ class Board extends CI_Controller {
 			}
 			foreach($query->result_array() as $opdata)
 			{
-				$opdata['class'] = "originalpost";
-				$this->load->view("showpost",$opdata);
+				$this->load->view("original",$opdata);
 			}
 		} else
 		{
@@ -173,9 +154,8 @@ class Board extends CI_Controller {
 		foreach($postTree as $id => $data)
 		{
 			$replydata = $posts[$id];
-			$replydata['class'] = "reply";
 			$replydata['hierarchy'] = $data["hierarchy"];
-			$this->load->view("showpost",$replydata);
+			$this->load->view("reply",$replydata);
 			$this->loadReplies($data["children"],$posts);
 		}
 	}

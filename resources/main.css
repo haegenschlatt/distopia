@@ -131,6 +131,10 @@ small {
 	color: #1292BA;
 }
 
+#posts a:hover {
+	text-decoration: none;
+}
+
 #posts p {
 	font-size: 13px;
 }
