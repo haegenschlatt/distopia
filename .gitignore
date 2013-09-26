@@ -5,6 +5,7 @@
 */cache/!index.html
 
 application/config/database.php
+application/config/config.php
 
 images/*.jpg
 images/*.png
