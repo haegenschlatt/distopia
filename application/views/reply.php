@@ -15,7 +15,7 @@ if($color!="none")
 <div style="width: 20px; height: 20px; background: #<?=$color;?>; float: left; margin-right: 10px;"></div>
 <?php
 }
-?>	<b><?=$name;?></b> | <?=timeago($date);?> | <a href="#<?=$id;?>" name="<?=$id;?>">Link</a> | 
+?>	<b><a href="<?=base_url();?>user/profile/<?=$username;?>"><?=$username;?></a></b> | <?=timeago($date);?> | <a href="#<?=$id;?>" name="<?=$id;?>">Link</a> | 
 	In reply to <a href="<?=base_url()?>board/<?=$board;?>/thread/<?=$thread;?>#<?=$parent;?>">post <?=$parent;?></a>
 	[<a class="clickToReply <?=$id;?>" href="#" onclick="document.getElementById('parent').value=<?=$id;?>">Reply</a>]
 </div>

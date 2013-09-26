@@ -104,7 +104,8 @@ class Board extends CI_Controller {
 		$posts = array();
 		$postMap = array();
 		$query = $this->db->query("SELECT
-			name,
+			userid,
+			username,
 			content,
 			date,
 			id,

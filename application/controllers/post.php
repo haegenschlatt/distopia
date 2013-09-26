@@ -27,6 +27,18 @@ class Post extends CI_Controller {
 		}
 		*/
 
+		$auth = $this->Users->getAuth();
+		if(!$auth)
+		{
+			exit("Not logged in!");
+		} else
+		{
+			$username = $auth["username"];
+			$userid = $auth["userid"];
+		}
+		$generatecolor=0;
+
+		/* Old posting system disabled for now. All posts must e from logged-in users.
 		//	Name and content of the post come from POST. If there is no name, the name is anonymous.
 		if($this->input->post('name')=="")
 		{
@@ -43,6 +55,7 @@ class Post extends CI_Controller {
 			// Since a name was given, we don't have to generate a color.
 			$generatecolor=0;
 		}
+		*/
 
 		$board = $this->input->post('board');
 		// Self-explanatory
@@ -208,7 +221,8 @@ class Post extends CI_Controller {
 
 		// Put everything into the DB!
 		$postContent = array(
-			$name,
+			$userid,
+			$username,
 			$content,
 			$date,
 			$id,
@@ -219,7 +233,7 @@ class Post extends CI_Controller {
 			$parent,
 			$latest,
 			$imgEntry);
-		$query = $this->db->query("INSERT INTO posts VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",$postContent);
+		$query = $this->db->query("INSERT INTO posts VALUES(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",$postContent);
 		
 		if($query)
 		{
@@ -235,7 +249,7 @@ class Post extends CI_Controller {
 		{
 			echo "The post was not successful.";
 		}
-	}	
+	}
 	//	Generate a tripcode. I know little about how this works.
 	//	From http://www.rune-server.org/programming/website-development/233780-tripcode-generator.html
 	private function gT($name) {

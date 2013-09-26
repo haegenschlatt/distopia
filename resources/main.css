@@ -112,15 +112,12 @@ small {
 	font-size: 13px;
 }
 
-#showboards {
-	position: fixed;
-	top: 47px;
-	right: 450px;
-	background-color: #fff;
-	display: none;
-	border: 1px solid #ccc;
-	padding: 10px;
+#userinfo {
+	float: right;
+	line-height: 23px;
 }
+
+/*---------------------------------*/
 
 #posts {
 	margin: 20px 0px 40px 20px;
@@ -142,8 +139,6 @@ small {
 .greentext {
 	color: #789922;
 }
-
-/*---------------------------------*/
 
 .singlepost {
 	padding: 0px 0px 10px 0px;

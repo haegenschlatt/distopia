@@ -12,7 +12,7 @@ if($color!="none")
 }
 ?>
 <div class="postinfo">
-	<b><?=$name;?></b> | <?=timeago($date);?>
+	<b><a href="<?=base_url();?>user/profile/<?=$username;?>"><?=$username;?></a></b> | <?=timeago($date);?>
 	[<a href="<?=base_url();?>board/<?=$board;?>/thread/<?=$id;?>">View thread</a>]
 </div>
 <?php
