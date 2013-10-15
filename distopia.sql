@@ -1,13 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.11.1deb2
+-- version 4.0.6deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 21, 2013 at 11:27 PM
--- Server version: 5.5.31
--- PHP Version: 5.4.4-14+deb7u4
+-- Generation Time: Oct 14, 2013 at 08:46 PM
+-- Server version: 5.5.33-1-log
+-- PHP Version: 5.5.4-1
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
@@ -40,27 +40,23 @@ CREATE TABLE IF NOT EXISTS `boardmeta` (
 INSERT INTO `boardmeta` (`name`, `description`, `remark`, `r9k`) VALUES
 ('a', 'beta test', '', 0);
 
--- --------------------------------------------------------
 
 --
 -- Table structure for table `posts`
 --
 
 CREATE TABLE IF NOT EXISTS `posts` (
-  `name` varchar(100) DEFAULT NULL,
+  `userid` int(11) NOT NULL,
+  `username` varchar(100) DEFAULT NULL,
   `content` varchar(900) DEFAULT NULL,
   `date` varchar(20) DEFAULT NULL,
   `id` int(11) DEFAULT NULL,
   `ip` varchar(15) DEFAULT NULL,
   `board` varchar(5) DEFAULT NULL,
-  `color` varchar(6) DEFAULT NULL,
   `thread` int(11) NOT NULL,
   `parent` int(11) NOT NULL,
-  `latest` varchar(50) NOT NULL,
   `image` varchar(50) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `sessions`
@@ -77,8 +73,41 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `sessions`
+-- Table structure for table `threads`
 --
+
+CREATE TABLE IF NOT EXISTS `threads` (
+  `userid` int(11) NOT NULL,
+  `username` text NOT NULL,
+  `title` text NOT NULL,
+  `content` text NOT NULL,
+  `date` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
+  `ip` text NOT NULL,
+  `board` text NOT NULL,
+  `type` text NOT NULL,
+  `latest` int(11) NOT NULL,
+  `image` int(11) NOT NULL,
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL,
+  `username` text NOT NULL,
+  `passhash` text NOT NULL,
+  `admin` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `passhash`, `admin`) VALUES
+(1, 'test', 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3', 0);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
