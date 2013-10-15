@@ -36,32 +36,28 @@ class Post extends CI_Controller {
 			$username = $auth["username"];
 			$userid = $auth["userid"];
 		}
-		$generatecolor=0;
 
-		/* Old posting system disabled for now. All posts must e from logged-in users.
-		//	Name and content of the post come from POST. If there is no name, the name is anonymous.
-		if($this->input->post('name')=="")
+		$type = $this->input->post("type");
+
+		if(!($type == "reply" || $type == "thread" || $type == "gallery" || $type == "stream"))
 		{
-			$name = "Anonymous";
-			// Since no name was given, we should generate a color to distinguish between anons.
-			$generatecolor=1;
-		} else
-		{
-			$name = $this->input->post('name');
-			// Encode special characters to HTML entities (including quotation marks). This sanitizes the post without creating any visible effect on the content.
-			$name = htmlentities($name, ENT_QUOTES);
-			// generate a tripcode from the name. gT() handles whether or not one will actually be generated (based on the presence of !)
-			$name = $this->gT($name);
-			// Since a name was given, we don't have to generate a color.
-			$generatecolor=0;
+			exit("Error: Invalid post type.");
 		}
-		*/
 
 		$board = $this->input->post('board');
-		// Self-explanatory
-		if($this->input->post("content")=="")
+
+		// Text content is optional for galleries.
+		if($this->input->post("content")=="" && $type != "gallery")
 		{
 			exit("You did not write any content.");
+		}
+
+		if(!$this->input->post("title") && $type != "reply")
+		{
+			exit("You did not include a title!");
+		} else
+		{
+			$title = $this->input->post("title");
 		}
 
 		// Because we parse the content for URLs and greentext, we have to sanitize before we do that.
@@ -76,7 +72,7 @@ class Post extends CI_Controller {
 		// Now we check for r9k match. Since the content is already parsed and de-injected we can just put $content directly into the query.
 		// Since we want to compare it to existing entries in the DB this is what we want to do anyway.
 		// At the moment, the r9k match only checks for an EXACT match in the string - case and everything.
-		// In the future it should work the way Munroe has specified it here:
+		// In the future it should work the way Munroe originally specified it.
 		// Check to see if r9k is enabled for this board
 		$query = $this->db->query("SELECT r9k FROM boardmeta WHERE name=?",array($board));
 		$r9kcheck = $query->row_array();
@@ -86,10 +82,29 @@ class Post extends CI_Controller {
 		{
 			exit("This content is not original. Write something unique! <a href='".$this->input->post("origin")."'>Back to the previous page</a>");
 		}
+
 		$date = time();
-		//	As one would expect, the ID of the post is one greater than the ID of the post before it.
-		//	So we just fetch the highest ID and increment it.
-		$query = $this->db->query("SELECT id FROM posts ORDER BY id DESC");
+
+		//	Since threads and posts are in two different tables, we have to add them.
+		$query = $this->db->query("SELECT id FROM posts ORDER BY id DESC LIMIT 1");
+		if($query->num_rows() > 0)
+		{
+			$id = $query->row_array()["id"];
+		} else
+		{
+			$id = 0;
+		}
+		$query = $this->db->query("SELECT id FROM threads ORDER BY id DESC LIMIT 1");
+		if($query->num_rows() > 0)
+		{
+			$id += $query->row_array()["id"];
+		} else
+		{
+			$id += 0;
+		}
+		$id++;
+
+		/*
 		if($query->num_rows()>0)
 		{
 			$results = $query->row();
@@ -99,13 +114,15 @@ class Post extends CI_Controller {
 		{
 			$id=0;
 		}
+		*/
 
-		//	The thread value in the DB stands for the thread that the post is within.
-		//	This is determined by a hidden field on the page. If the new post is a thread, the thread value will be -1.
+		//	Thread containing the post. This variable is only used for posts.
 		$thread = $this->input->post('thread');
 		//	REMOTE_ADDR is modified by Cloudflare.php in application/hooks.
 		$ip = $_SERVER["REMOTE_ADDR"];
 		//	The board is sent in a hidden field via POST.
+
+		// Make sure the board exists
 		$query = $this->db->query("SELECT * FROM boardmeta WHERE name=?;",array($board));
 		if($query->num_rows()===1)
 		{
@@ -114,35 +131,12 @@ class Post extends CI_Controller {
 		{
 			exit("Error!");
 		}
-		//	Find all posts that have the same IP as this one, to see if this poster has posted already
-		if($generatecolor)
-		{
-			if($thread != -1)
-			{
-				$query = $this->db->query("SELECT color FROM posts WHERE ip=? AND(thread=? OR id=?) AND color!='none'",array($ip,$thread,$thread));
-			}
-			if($query->num_rows()==0 || $thread==-1)
-			{
-				$color = $this->randomColor();
-			} else
-			{
-				//	There is probably a better way to write the color from the IP to the variable.
-				foreach($query->result() as $row)
-				{
-					$color = $row->color;
-				}
-			}
-		} else
-		{
-			$color = "none";
-		}
-		//	The parent (the post that the new post that we're creating is in reply to) is sent by a hidden field to this file.
 		//	If the post is creating a new thread, there will be no parent, so we use -1.
 		//	If the post is in reply to the OP, the OP will be the parent.
 		//	If the post is in reply to another post, that post will be the parent.
-		//	Currently there is no code in the thread-loading to make use of this, but there will eventually be hierarichal, nested replies.
 		if($thread == -1)
 		{
+			// This isn't really necessary - threads have their own table now, with no "parent" field
 			$parent = -1;
 		} else if($this->input->post('parent')=="")
 		{
@@ -155,28 +149,27 @@ class Post extends CI_Controller {
 		//	A reply post will not need to have a "latest" field. Only a thread post (top-level, OP, $thread is -1) will need to have a latest field.
 		//	When a reply post is created, the "latest" field on its thread is updated.
 		//	When a thread is created, the "latest" field on that thread post is the date of its creation.
-		if($thread==-1)
+		if($type != "reply")
 		{
 			$latest = time();
 		} else if($this->input->post('sage')!="y")
 		{
-			$query = $this->db->query("SELECT * FROM posts WHERE id=?;",array($thread));
-			if($query->num_rows>0)
-			{
-				$this->db->query("UPDATE posts SET latest=? WHERE id=?;",array(time(),$thread));
-				$latest="";
-			}
+			$this->db->query("UPDATE threads SET latest = ? WHERE id = ?",array(time(),$thread));
+			$latest = time();
 		} else if($this->input->post('sage')=="y")
 		{
-			$query = $this->db->query("SELECT latest FROM posts WHERE id=?;",array($thread));
-			$latestar = $query->row_array();
-			$latest = $latestar['latest'];
+			$query = $this->db->query("SELECT latest FROM threads WHERE id=?;",array($thread));
+			$latest = $query->row_array()["latest"];
 		}
 
 		// Image handling
 		if($_FILES["upload"]["name"] == null)
 		{
 			$imgEntry = 0;
+			if($type == "gallery")
+			{
+				exit("You must upload an image to create a gallery!");
+			}
 		} else
 		{
 			if($_FILES["upload"]["type"] == "image/jpeg")
@@ -220,21 +213,40 @@ class Post extends CI_Controller {
 		}
 
 		// Put everything into the DB!
-		$postContent = array(
-			$userid,
-			$username,
-			$content,
-			$date,
-			$id,
-			$ip,
-			$board,
-			$color,
-			$thread,
-			$parent,
-			$latest,
-			$imgEntry);
-		$query = $this->db->query("INSERT INTO posts VALUES(?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",$postContent);
-		
+
+		if($type == "reply")
+		{
+			// Reply to post
+			$postContent = array(
+				$userid,
+				$username,
+				$content,
+				$date,
+				$id,
+				$ip,
+				$board,
+				$thread,
+				$parent,
+				$imgEntry);
+			$query = $this->db->query("INSERT INTO posts VALUES(?,?, ?, ?, ?, ?, ?, ?, ?, ?);",$postContent);
+		} else
+		{
+			// New thread
+			$postContent = array(
+				$userid,
+				$username,
+				$title,
+				$content,
+				$date,
+				$id,
+				$ip,
+				$board,
+				$type,
+				$latest,
+				$imgEntry);
+			$query = $this->db->query("INSERT INTO threads VALUES(?,?,?,?,?,?,?,?,?,?,?);",$postContent);
+		}
+
 		if($query)
 		{
 			if($thread==-1)
@@ -250,45 +262,7 @@ class Post extends CI_Controller {
 			echo "The post was not successful.";
 		}
 	}
-	//	Generate a tripcode. I know little about how this works.
-	//	From http://www.rune-server.org/programming/website-development/233780-tripcode-generator.html
-	private function gT($name) {
-		$test = strpos($name, "#");
-		if($test === FALSE){
-			$nameo;
-			$trip = $name;
-		}
-		else {
-			$k = explode('#', $name);
-			$nameo = $k[0];
-			$trip = $k[1];
-		}
-		if((function_exists('mb_convert_encoding'))){
-			mb_substitute_character('none');
-			$recoded_cap = mb_convert_encoding($trip, 'Shift_JIS', 'UTF-8');
-		}
-		$trip = (($recoded_cap != '') ? $recoded_cap : $trip);
-		$salt = substr($trip.'H.', 1, 2);
-		$salt = preg_replace('/[^\.-z]/', '.', $salt);
-		$salt = strtr($salt, ':;<=>?@[\]^_`', 'ABCDEFGabcdef');
-		$output = substr(crypt($trip, $salt), -10);
-		if($test===FALSE)
-		{
-			return $name;
-		} else
-		{
-			return $nameo.'!'.$output;
-		}
-	}
-	private function randomColor()
-	{
-		$c="";
-	    for ($i = 0; $i<3; $i++) 
-	    { 
-	        $c .=  dechex(rand(0,15)); 
-	    }
-	    return "$c"; 
-	}
+
 	// Find all ">greentext" and insert the necessary HTML to make the text green.
 	// Run this AFTER the conversion to HTML entities.
 	private function greenText($input)

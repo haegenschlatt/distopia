@@ -1,0 +1,197 @@
+/*
+Distopia (dis2) CSS.
+*/
+
+body {
+	background: #fff;
+	padding: 0;
+	margin: 0;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+p {
+	margin: 0;
+	padding: 0;
+}
+
+small {
+	font-size: 11px;
+}
+
+#topbar {
+	background-color: #eee;
+	background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0, #E0E0E0),
+	color-stop(1, #FAFAFA)
+	);
+	background-image: -moz-linear-gradient(
+	center bottom,
+	#E0E0E0 0%,
+	#FAFAFA 100%
+	);
+	padding: 7px 10px 7px 10px; 
+	border-bottom: 1px solid #ccc;
+/*	Total height: 37px; */
+	top: 0;
+}
+
+#boardinfo, #boardinfo a {
+	padding: 0;
+	margin: 0;
+	color: #222;
+	text-decoration: none;
+	font-size: 23px;
+	line-height: 23px;
+	display: inline;
+	font-weight: 100;
+}
+
+#topbar a {
+	display: inline;
+	text-decoration: none;
+}
+#topbar #showCreatePost {
+	padding: 0;
+	color: #555;
+}
+
+#topbar #showCreatePost:before {
+	content: "[";
+	font-size: 21px;
+}
+
+#topbar #showCreatePost:after {
+	content:"]";
+	font-size: 21px;
+}
+
+#createpost {
+/*	position: fixed;
+	top: 47px;
+	right: 10px;
+*/
+	padding: 10px;
+	margin-bottom: 20px;
+	display: none; 
+}
+
+#createthread {
+	position: fixed;
+	top: 47px;
+	right: 10px;
+	padding: 10px;
+	display: none; 
+}
+
+#createpost #content, #createpost #name, #createpost #parent {
+	padding: 6px;
+	border: 1px solid #CCC;
+	outline: none;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	line-height: 21px;
+}
+
+#createpost #content:focus, #createpost #name:focus, #createpost #parent:focus {
+	border: 1px solid #8FCADB;
+}
+
+#createpost #hideCreatePost {
+	color: #1292BA;
+	
+}
+
+#createpost #submitButton {
+	float: left;
+}
+
+#createpost label {
+	font-size: 13px;
+}
+
+#userinfo {
+	float: right;
+	line-height: 23px;
+}
+
+/*---------------------------------*/
+
+#posts {
+	margin: 20px 0px 40px 20px;
+	line-height: 150%;
+}
+
+#posts a {
+	color: #1292BA;
+}
+
+#posts a:hover {
+	text-decoration: none;
+}
+
+#posts p {
+	font-size: 13px;
+}
+
+.greentext {
+	color: #789922;
+}
+
+.singlepost {
+	padding: 0px 0px 10px 0px;
+	margin: 0px 0px 10px 0px;
+	width: 1000px;
+}
+
+.singlepost p {
+	margin: 10px 0px 10px 0px;
+}
+
+.reply{
+	border-left: 1px solid #ccc;
+	padding: 5px 0px 5px 10px;
+	margin: 0px 20px 0px 0px;
+	z-index: 1;
+	width: 700px;
+}
+
+.postpreview {
+	margin-bottom: 10px;
+}
+
+.replypreview {
+	margin-left: 50px;
+}
+
+.postinfo {
+	display: inline;
+	color: #888;
+	font-size: 13px;
+}
+
+/*---------------------------------*/
+
+.admin {
+	color: #f00;
+}
+
+.deleted {
+	color: #f00;
+}
+
+.report {
+	font-size: 11px;
+}
+
+.report:hover {
+	color: #f00;
+}
+
+/*---------------------------------*/
+
+#footerinfo {
+	margin: 20px 0px 0px 0px;
+}

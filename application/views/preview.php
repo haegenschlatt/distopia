@@ -3,16 +3,9 @@ $this->load->helper('timeago');
 ?>
 
 <div class="singlepost preview">
-	<?php
-if($color!="none")
-{
-?>
-<div style="width: 20px; height: 20px; background: #<?=$color;?>; float: left; margin-right: 10px;"></div>
-<?php
-}
-?>
+
 <div class="postinfo">
-	<b><a href="<?=base_url();?>user/profile/<?=$username;?>"><?=$username;?></a></b> | <?=timeago($date);?>
+	<b><a href="<?=base_url();?>user/profile/<?=$username;?>"><?=$username;?></a></b> | created <span title="<?=date("D d M Y, g:i:s A",$date);?>"><?=timeago($date);?></span> | updated <span title="<?=date("D d M Y, g:i:s A",$latest);?>"><?=timeago($latest);?></span>
 	[<a href="<?=base_url();?>board/<?=$board;?>/thread/<?=$id;?>">View thread</a>]
 </div>
 <?php

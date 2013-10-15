@@ -5,6 +5,14 @@ class User extends CI_Controller {
 	{
 		// Redirect to profile for this user, or the login page if they're not logged in
 		//$this->profile("user");
+		$auth = $this->Users->getAuth();
+		if(!$auth)
+		{
+			header("Location: " . base_url() . "user/login");
+		} else
+		{
+			header("Location: " . base_url() . "user/profile/" . $auth["username"]);
+		}
 	}
 
 	public function profile($user = null)
@@ -23,7 +31,7 @@ class User extends CI_Controller {
 		
 	}
 
-	public function message()
+	public function message($to = null)
 	{
 		
 	}
@@ -69,5 +77,14 @@ class User extends CI_Controller {
 		echo "<br>";
 		echo "userid: " ;
 		echo $this->session->userdata('userid');
+		echo "<br>";
+		if(!$this->Users->getAuth())
+		{
+			echo "You don't appear to be logged in.";
+		}
+		if($this->Users->getAuth())
+		{
+			echo "You are logged in!";
+		}
 	}
 }

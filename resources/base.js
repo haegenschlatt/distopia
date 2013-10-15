@@ -1,11 +1,14 @@
 $(document).ready(function() {
-	$("#showCreatePost").click(function(event) {
-		event.preventDefault();
-		$("#createpost").fadeIn(200);
-	});
-	$("#hideCreatePost").click(function(event) {
-		event.preventDefault();
-		$("#createpost").fadeOut(200);
+	$("#toggleCreateThread").click(function(event) {
+		if($("#createThread").is(":visible"))
+		{
+			$("#toggleCreateThread").html("Create new thread &raquo;");
+			$("#createThread").slideUp();
+		} else
+		{
+			$("#toggleCreateThread").html("Hide");
+			$("#createThread").slideDown();
+		}
 	});
 	$(".clickToReply").click(function(event) {
 		event.preventDefault();
@@ -13,8 +16,9 @@ $(document).ready(function() {
 		// We get those classes as an array, then grab the second element, which is the post number (index 1).
 		var classList = $(this).attr('class').split(/\s+/);
 		var reply = classList[1];
-		$(".singlepost."+reply).append($("#createpost"));
-		$("#createpost").fadeIn(200);
+		$("#parent").val(classList[1])
+		$(".singlepost."+reply).append($("#createThread"));
+		$("#createThread").fadeIn(200);
 	});
 	$(".postimage").click(function(event) {
 		event.preventDefault();

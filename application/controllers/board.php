@@ -40,7 +40,7 @@ class Board extends CI_Controller {
 			$boardmeta['thread'] = -1;
 			$this->load->view("header", $boardmeta);
 		}
-		$query = $this->db->query("SELECT * FROM posts WHERE board=? AND thread=-1 ORDER BY latest DESC LIMIT 10 OFFSET ?;",array($board,$page*20));
+		$query = $this->db->query("SELECT * FROM threads WHERE board=? ORDER BY latest DESC LIMIT 10 OFFSET ?;",array($board,$page*20));
 		if($query->num_rows()>0)
 		{
 			foreach($query->result_array() as $postdata)
@@ -71,9 +71,10 @@ class Board extends CI_Controller {
 		}
 
 		// Check for the OP
-		$query = $this->db->query("SELECT * FROM posts WHERE id=? AND board=?",array($thread,$board));
+		$query = $this->db->query("SELECT * FROM threads WHERE id=? AND board=?",array($thread,$board));
 		if($query->num_rows()>0)
 		{
+			/*
 			$row = $query->row_array();
 			if($row["thread"]!=-1)
 			{
@@ -82,13 +83,14 @@ class Board extends CI_Controller {
 				<?php
 				exit();
 			}
+			*/
 			foreach($query->result_array() as $opdata)
 			{
 				$this->load->view("original",$opdata);
 			}
 		} else
 		{
-			$query = $this->db->query("SELECT * FROM posts WHERE id=?;",array($this->db->escape($thread)));
+			$query = $this->db->query("SELECT * FROM posts WHERE id=?;",array($thread));
 			if($query->num_rows()>0)
 			{
 				$result = $query->row_array();
@@ -111,10 +113,8 @@ class Board extends CI_Controller {
 			id,
 			ip,
 			board,
-			color,
 			thread,
 			parent,
-			latest,
 			image
 			FROM posts WHERE thread=? AND board=? ORDER BY date ASC;", array($thread,$board));
 
@@ -160,6 +160,4 @@ class Board extends CI_Controller {
 			$this->loadReplies($data["children"],$posts);
 		}
 	}
-
-
 }
