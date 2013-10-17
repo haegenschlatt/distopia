@@ -18,6 +18,8 @@ There is currently no automated installation.
 9. See that board at [install location]/board/a/
 10. (Optional) Insert your CAPTCHA public and private keys in the indicated places in application/config/constants.php.
 
+There is one user created by default: username "test", password "test". Additional users must be added by inserting the user ID, username, SHA1 hash of the password, and 0 or 1 (for admin status) into the `users` table.
+
 # Features
 
 Features that work:
