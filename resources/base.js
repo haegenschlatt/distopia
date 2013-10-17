@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
 	$("#toggleCreateThread").click(function(event) {
 		if($("#createThread").is(":visible"))
 		{
@@ -10,6 +11,7 @@ $(document).ready(function() {
 			$("#createThread").slideDown();
 		}
 	});
+
 	$(".clickToReply").click(function(event) {
 		event.preventDefault();
 		// There are two classes for this element. One is clickToReply, the other is the post number.
@@ -20,6 +22,7 @@ $(document).ready(function() {
 		$(".singlepost."+reply).append($("#createThread"));
 		$("#createThread").fadeIn(200);
 	});
+
 	$(".postimage").click(function(event) {
 		event.preventDefault();
 		var full = $(this).find("a").attr("href");
@@ -33,4 +36,5 @@ $(document).ready(function() {
 			$(this).addClass("expanded");
 		}
 	});
+
 });

@@ -7,7 +7,7 @@ distopia main CSS.
 
 body {
 	/* Will bundle better fonts later. */
-	font-family: serif;
+	font-family: "Georgia", serif;
 }
 
 #container {
@@ -34,6 +34,7 @@ a {
 	float: right;
 	line-height: 50px;
 	text-align: right;
+	height: 100%;
 }
 
 #topbar #boardinfo {
@@ -67,20 +68,67 @@ a {
 #createThread {
 	display: none;
 	margin-top: 10px;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #000;
 }
 
 /* ------ MAIN CONTENT AREA ------ */
 
 #posts {
-	margin-top: 20px;
+
 }
 
-.postcontent p {
-	margin: 10px 0px 10px 0px;
-}
 /* ------ POST VIEWS ------ */
 
-	/* Original Post within thread */
-	.original {
-		
+/* Original Post within thread */
+.original {
+	
+}
+
+.postcontent {
+	margin: 10px 0px 10px 0px;
+}
+
+/* Post preview on the board index */
+.preview {
+	overflow: hidden;
+	border-bottom: 1px solid #000;
+	margin-bottom: 3px;
+}
+	.preview .threadInfo {
+		float: left;
+		height: 60px;
+		display: block;
 	}
+		.preview .threadInfo .previewImage {
+			float: left;
+			margin-right: 10px;
+		}
+
+		.preview .threadInfo .threadTitle {
+			display: inline;
+			font-size: 24px;
+			line-height: 60px;
+		}
+
+	.preview .threadMeta {
+		float: right;
+		border-left: 1px solid #000;
+		padding-left: 10px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		height: 50px;
+
+	}
+
+		.preview .threadMeta .threadMetaBlock {
+			float: left;
+			display: block;
+			height: 100%;
+			width: 100px;
+		}
+
+			.preview .threadMeta .threadMetaBlock h4 {
+				font-size: 24px;
+				font-variant: small-caps;
+			}

@@ -89,21 +89,28 @@ class Post extends CI_Controller {
 		$query = $this->db->query("SELECT id FROM posts ORDER BY id DESC LIMIT 1");
 		if($query->num_rows() > 0)
 		{
-			$id = $query->row_array()["id"];
+			$postLastId = $query->row_array()["id"];
 		} else
 		{
-			$id = 0;
+			$postLastId = 0;
 		}
 		$query = $this->db->query("SELECT id FROM threads ORDER BY id DESC LIMIT 1");
 		if($query->num_rows() > 0)
 		{
-			$id += $query->row_array()["id"];
+			$threadLastId = $query->row_array()["id"];
 		} else
 		{
-			$id += 0;
+			$threadLastId = 0;
+		}
+		// They shouldn't ever be equal.
+		if($postLastId > $threadLastId)
+		{
+			$id = $postLastId;
+		} else
+		{
+			$id = $threadLastId;
 		}
 		$id++;
-
 		/*
 		if($query->num_rows()>0)
 		{
