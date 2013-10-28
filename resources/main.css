@@ -6,13 +6,13 @@ distopia main CSS.
 /* ------ GLOBAL ------ */
 
 body {
-	/* Will bundle better fonts later. */
-	font-family: "Georgia", serif;
+
 }
 
 #container {
 	width: 960px;
 	margin: 0 auto;
+	font-family: "Open Sans", sans-serif;
 }
 
 a {
@@ -22,13 +22,13 @@ a {
 
 /* ------ TOP BAR ------ */
 
-#topbar {
+#topBar {
 	border-bottom: 1px solid #000;
 	overflow: hidden;
 	height: 50px;
 }
 
-#topbar #userinfo {
+#topBar #userInfo {
 	width: 320px;
 	margin: 0;
 	float: right;
@@ -37,7 +37,7 @@ a {
 	height: 100%;
 }
 
-#topbar #boardinfo {
+#topBar #pageTitle {
 	font-size: 24px;
 	width: 320px;
 	margin: 0 auto;
@@ -46,14 +46,14 @@ a {
 	text-align: center;
 }
 
-	#topbar #boardinfo a {
+	#topBar #pageTitle a {
 		font-size: 36px;
 		text-decoration: none;
 		color: #000;
 		line-height: 50px;
 	}
 
-		#topbar #boardinfo a:active {
+		#topBar #pageTitle a:active {
 			color: #000;
 		}
 
@@ -68,9 +68,18 @@ a {
 #createThread {
 	display: none;
 	margin-top: 10px;
-	margin-bottom: 10px;
 	border-bottom: 1px solid #000;
 }
+
+	#createThread #title {
+		font-size: 24px;
+		font-family: "Open Sans", sans-serif;
+	}
+
+	#createThread #content {
+		font-size: 16px;
+		font-family: "Open Sans", sans-serif;
+	}
 
 /* ------ MAIN CONTENT AREA ------ */
 
@@ -79,15 +88,6 @@ a {
 }
 
 /* ------ POST VIEWS ------ */
-
-/* Original Post within thread */
-.original {
-	
-}
-
-.postcontent {
-	margin: 10px 0px 10px 0px;
-}
 
 /* Post preview on the board index */
 .preview {
@@ -109,11 +109,12 @@ a {
 			display: inline;
 			font-size: 24px;
 			line-height: 60px;
+			font-weight: 300;
 		}
 
 	.preview .threadMeta {
 		float: right;
-		border-left: 1px solid #000;
+		border-left: 1px solid #ccc;
 		padding-left: 10px;
 		margin-top: 5px;
 		margin-bottom: 5px;
@@ -132,3 +133,23 @@ a {
 				font-size: 24px;
 				font-variant: small-caps;
 			}
+
+/* Original Post within thread */
+.original {
+	padding: 10px 0px 10px 0px;
+}
+
+/* Reply within thread */
+.reply {
+	padding: 5px 0px 5px 0px;
+	clear: none;
+}
+
+	.reply .postInfo {
+		border-top: 1px solid #ccc;
+		display: inline;
+	}
+
+.postContent {
+	margin: 10px 0px 10px 0px;
+}

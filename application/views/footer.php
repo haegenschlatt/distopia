@@ -5,17 +5,17 @@ if($page!=0)
 {
 	$previous = $page-1;
 ?>
-<a href="<?php echo base_url(); ?>board/<?php echo $board; ?>/page/<?php echo $previous; ?>">&laquo; Previous</a>
+<a href="<?=base_url();?>board/<?=$board;?>/page/<?=$previous;?>">&laquo; Previous</a>
 <?php	
 }
 $next = $page+1;
 ?>
-<a href="<?php echo base_url(); ?>board/<?php echo $board; ?>/page/<?php echo $next; ?>">Next &raquo;</a>
+<a href="<?=base_url();?>board/<?=$board;?>/page/<?=$next;?>">Next &raquo;</a>
 <?php
 }
 ?>
-<div id="footerinfo">
-<h2 style="font-weight: 100; display: inline;">[<a href='<?php echo base_url(); ?>'>distopia</a>]</h2>
+<div id="footerInfo">
+[<a href='<?=base_url();?>'>distopia</a>]
 <?php
 $query = $this->db->query("SELECT name FROM boardmeta ORDER BY name ASC");
 foreach($query->result() as $board)

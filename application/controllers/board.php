@@ -39,6 +39,7 @@ class Board extends CI_Controller {
 			// The header view requires the thread ID for the post form. Because the header view is also used for viewing OP, we use -1. This is also stored in the database to represent that the post is an OP.
 			$boardmeta['thread'] = -1;
 			$this->load->view("header", $boardmeta);
+			$this->load->view("postsbar",$boardmeta);
 		}
 		$query = $this->db->query("SELECT * FROM threads WHERE board=? ORDER BY latest DESC LIMIT 10 OFFSET ?;",array($board,$page*20));
 		if($query->num_rows()>0)
@@ -68,6 +69,7 @@ class Board extends CI_Controller {
 		{
 			$boardmeta['thread'] = $thread;
 			$this->load->view("header", $boardmeta);
+			$this->load->view("postsbar",$boardmeta);
 		}
 
 		// Check for the OP
@@ -116,7 +118,7 @@ class Board extends CI_Controller {
 			thread,
 			parent,
 			image
-			FROM posts WHERE thread=? AND board=? ORDER BY date ASC;", array($thread,$board));
+			FROM posts WHERE thread=? AND board=? ORDER BY date DESC;", array($thread,$board));
 
 		foreach($query->result_array() as $row)
 		{

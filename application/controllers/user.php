@@ -22,7 +22,8 @@ class User extends CI_Controller {
 			show_404();
 		} else
 		{
-			
+			$this->load->view("header",array("name" => $user, "description" => "profile"));
+			$this->load->view("profilebar",array("name" => $user, "description" => "profile"));
 		}
 	}
 
